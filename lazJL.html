@@ -1,0 +1,2659 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Lazuardi GCS RS | Sistem Pasien</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== VARIABLES & RESET ===== */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --secondary: #10b981;
+            --secondary-dark: #059669;
+            --accent: #8b5cf6;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --info: #3b82f6;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            
+            /* FLEXIBLE LOGO VARIABLES */
+            --logo-left-max-width: clamp(80px, 15vw, 160px);
+            --logo-right-max-width: clamp(60px, 12vw, 120px);
+            --logo-left-top: clamp(8px, 2vh, 15px);
+            --logo-left-left: clamp(10px, 2vw, 20px);
+            --logo-right-top: clamp(8px, 2vh, 15px);
+            --logo-right-right: clamp(10px, 2vw, 20px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #fef7ff 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== FLEXIBLE LOGO STYLES - RESPONSIF UNTUK SEMUA DEVICE ===== */
+        .header-logo-left {
+            position: absolute;
+            top: var(--logo-left-top);
+            left: var(--logo-left-left);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-img-left {
+            max-width: var(--logo-left-max-width);
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            transition: all 0.2s ease;
+        }
+
+        .header-logo-right {
+            position: absolute;
+            top: var(--logo-right-top);
+            right: var(--logo-right-right);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-img-right {
+            max-width: var(--logo-right-max-width);
+            width: 100%;
+            max-height: calc(var(--logo-right-max-width) * 0.5);
+            height: auto;
+            border-radius: 8px;
+            background: transparent;
+            padding: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            object-fit: contain;
+            transition: all 0.2s ease;
+        }
+
+        /* EXTRA SMALL DEVICES (iPhone SE, old phones) */
+        @media (max-width: 380px) {
+            :root {
+                --logo-left-max-width: 70px;
+                --logo-right-max-width: 55px;
+                --logo-left-top: 6px;
+                --logo-left-left: 8px;
+                --logo-right-top: 6px;
+                --logo-right-right: 8px;
+            }
+            .logo-img-right {
+                padding: 3px;
+            }
+        }
+
+        /* SMALL DEVICES (phones) */
+        @media (min-width: 381px) and (max-width: 480px) {
+            :root {
+                --logo-left-max-width: 90px;
+                --logo-right-max-width: 65px;
+                --logo-left-top: 8px;
+                --logo-left-left: 12px;
+                --logo-right-top: 8px;
+                --logo-right-right: 12px;
+            }
+        }
+
+        /* MEDIUM DEVICES (large phones, small tablets) */
+        @media (min-width: 481px) and (max-width: 640px) {
+            :root {
+                --logo-left-max-width: 110px;
+                --logo-right-max-width: 75px;
+                --logo-left-top: 10px;
+                --logo-left-left: 14px;
+                --logo-right-top: 10px;
+                --logo-right-right: 14px;
+            }
+        }
+
+        /* TABLETS */
+        @media (min-width: 641px) and (max-width: 768px) {
+            :root {
+                --logo-left-max-width: 130px;
+                --logo-right-max-width: 90px;
+                --logo-left-top: 12px;
+                --logo-left-left: 16px;
+                --logo-right-top: 12px;
+                --logo-right-right: 16px;
+            }
+        }
+
+        /* LAPTOPS & SMALL DESKTOPS */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            :root {
+                --logo-left-max-width: 145px;
+                --logo-right-max-width: 105px;
+                --logo-left-top: 14px;
+                --logo-left-left: 18px;
+                --logo-right-top: 14px;
+                --logo-right-right: 18px;
+            }
+        }
+
+        /* LARGE DESKTOPS */
+        @media (min-width: 1025px) {
+            :root {
+                --logo-left-max-width: 160px;
+                --logo-right-max-width: 120px;
+                --logo-left-top: 15px;
+                --logo-left-left: 20px;
+                --logo-right-top: 15px;
+                --logo-right-right: 20px;
+            }
+        }
+
+        /* 4K AND ULTRA-WIDE */
+        @media (min-width: 1920px) {
+            :root {
+                --logo-left-max-width: 180px;
+                --logo-right-max-width: 140px;
+                --logo-left-top: 20px;
+                --logo-left-left: 30px;
+                --logo-right-top: 20px;
+                --logo-right-right: 30px;
+            }
+        }
+
+        /* LANDSCAPE MODE ON PHONES */
+        @media (max-width: 900px) and (orientation: landscape) {
+            :root {
+                --logo-left-max-width: 100px;
+                --logo-right-max-width: 70px;
+                --logo-left-top: 8px;
+                --logo-left-left: 15px;
+                --logo-right-top: 8px;
+                --logo-right-right: 15px;
+            }
+            .header {
+                height: 55px !important;
+            }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        @media (min-width: 640px) { .container { max-width: 640px; padding: 0 20px; } }
+        @media (min-width: 768px) { .container { max-width: 768px; padding: 0 24px; } }
+        @media (min-width: 1024px) { .container { max-width: 1024px; padding: 0 32px; } }
+        @media (min-width: 1280px) { .container { max-width: 1280px; padding: 0 40px; } }
+        @media (min-width: 1536px) { .container { max-width: 1536px; } }
+
+        .auth-page {
+            display: flex;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 32px 24px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: var(--card-shadow-hover);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @media (min-width: 768px) { .auth-container { padding: 48px 40px; } }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .auth-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .auth-logo img {
+            max-width: 150px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .auth-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .auth-header p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 14px;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 50px 14px 16px;
+            border: 2px solid var(--gray-light);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: var(--transition);
+            background: var(--light);
+        }
+
+        @media (max-width: 640px) {
+            .form-input { padding: 16px 50px 16px 16px; font-size: 16px; }
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: white;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            cursor: pointer;
+            padding: 8px;
+            touch-action: manipulation;
+        }
+
+        .btn {
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        @media (max-width: 640px) { .btn { padding: 18px; min-height: 56px; } }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:active { transform: translateY(0); }
+
+        .app-container {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            height: 70px;
+            display: flex;
+            align-items: center;
+        }
+
+        @media (max-width: 640px) { 
+            .header { 
+                padding: 12px 0; 
+                height: 60px; 
+            }
+        }
+
+        @media (max-width: 480px) { 
+            .header { 
+                padding: 10px 0; 
+                height: 55px; 
+            }
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo { display: none; }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        @media (max-width: 480px) {
+            .user-menu { gap: 10px; }
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: var(--light);
+            border-radius: 10px;
+        }
+
+        @media (max-width: 640px) {
+            .user-info { padding: 6px 12px; }
+        }
+
+        @media (max-width: 480px) { .user-info .user-text { display: none; } }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        @media (max-width: 640px) {
+            .user-avatar { width: 32px; height: 32px; font-size: 13px; }
+        }
+
+        @media (min-width: 768px) { .user-avatar { width: 40px; height: 40px; font-size: 16px; } }
+
+        .btn-logout {
+            padding: 10px 20px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 640px) {
+            .btn-logout { padding: 8px 14px; font-size: 13px; }
+            .btn-logout span { display: none; }
+        }
+
+        @media (max-width: 480px) {
+            .btn-logout { padding: 8px 12px; }
+        }
+
+        .main-content { padding: 24px 0 40px; }
+
+        .single-stat-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 40px 32px;
+            margin-bottom: 32px;
+            box-shadow: var(--card-shadow-hover);
+            border: 2px solid var(--primary-light);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .single-stat-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .single-stat-number {
+            font-size: 72px;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 20px 0;
+            text-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            line-height: 1;
+        }
+
+        @media (max-width: 768px) { .single-stat-number { font-size: 56px; } }
+        @media (max-width: 640px) { .single-stat-number { font-size: 48px; } }
+        @media (max-width: 480px) { .single-stat-number { font-size: 42px; } }
+
+        .single-stat-label {
+            font-size: 20px;
+            color: var(--gray);
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 640px) { .single-stat-label { font-size: 18px; } }
+        @media (max-width: 480px) { .single-stat-label { font-size: 16px; } }
+
+        .single-stat-subtitle {
+            font-size: 14px;
+            color: var(--gray);
+            opacity: 0.8;
+        }
+
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        @media (min-width: 1024px) { .dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; } }
+        @media (min-width: 768px) and (max-width: 1024px) { .dashboard { display: flex; flex-direction: column; gap: 24px; } }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            border: 1px solid var(--gray-light);
+            width: 100%;
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) { .card { padding: 20px 16px; } }
+        @media (min-width: 768px) { .card { padding: 28px; } }
+
+        .card:hover { box-shadow: var(--card-shadow-hover); }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--light);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        @media (max-width: 640px) { .card-title { font-size: 18px; gap: 10px; } }
+        @media (max-width: 480px) { .card-title { font-size: 16px; } }
+
+        .card-title i { color: var(--primary); }
+
+        .form-section { margin-bottom: 24px; }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @media (max-width: 480px) { .section-title { font-size: 15px; } }
+
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        }
+
+        .form-label-enhanced {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .required::after {
+            content: '*';
+            color: var(--danger);
+            margin-left: 4px;
+        }
+
+        .form-input-enhanced {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--gray-light);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: var(--transition);
+            background: var(--light);
+        }
+
+        @media (max-width: 640px) { .form-input-enhanced { padding: 16px; font-size: 16px; } }
+
+        .form-input-enhanced:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: white;
+        }
+
+        .form-select-enhanced {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--gray-light);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: var(--transition);
+            background: var(--light);
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
+        }
+
+        .form-textarea-enhanced {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--gray-light);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: var(--transition);
+            background: var(--light);
+            min-height: 100px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-danger-sm {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        @media (min-width: 640px) { .btn-group { flex-direction: row; flex-wrap: wrap; } }
+
+        .btn-small {
+            padding: 10px 18px;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 480px) { 
+            .btn-small { padding: 8px 14px; font-size: 13px; }
+        }
+
+        /* ===== TABLE STYLES ===== */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid var(--gray-light);
+            margin-top: 20px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table-container::-webkit-scrollbar { height: 6px; }
+        .table-container::-webkit-scrollbar-track { background: var(--light); border-radius: 3px; }
+        .table-container::-webkit-scrollbar-thumb { background: var(--gray-light); border-radius: 3px; }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        @media (max-width: 640px) { .table { min-width: 600px; } }
+
+        .table th {
+            background: var(--light);
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 2px solid var(--gray-light);
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid var(--gray-light);
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        .table tr:hover { background: var(--light); }
+
+        @media (max-width: 640px) { .table th, .table td { padding: 12px 10px; font-size: 13px; } }
+
+        /* ===== CHECKBOX STYLES ===== */
+        .checkbox-column {
+            width: 40px;
+            text-align: center;
+        }
+
+        .checkbox-all {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .checkbox-item {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .selection-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            background: var(--primary-light);
+            border-radius: 8px;
+            color: var(--primary-dark);
+            font-weight: 500;
+            font-size: 14px;
+            flex-wrap: wrap;
+        }
+
+        .selection-count {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .btn-export-selected {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .btn-export-selected:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-export-selected:disabled {
+            background: var(--gray-light);
+            color: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 480px) {
+            .selection-info { flex-direction: column; align-items: flex-start; }
+            .btn-export-selected { margin-left: 0; width: 100%; justify-content: center; }
+        }
+
+        /* ===== ACTION BUTTONS ===== */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 640px) { .action-buttons { flex-direction: column; gap: 6px; } }
+
+        .btn-action {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            min-height: 36px;
+        }
+
+        @media (max-width: 640px) { .btn-action { padding: 10px 12px; font-size: 12px; justify-content: center; } }
+
+        .btn-view { background: var(--primary); color: white; }
+        .btn-edit { background: var(--warning); color: white; }
+        .btn-delete { background: var(--danger); color: white; }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            border: 2px solid var(--gray-light);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: var(--transition);
+            background: var(--light);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: white;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            font-size: 16px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 24px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: var(--card-shadow-hover);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @media (max-width: 640px) { .modal-content { padding: 20px 16px; max-height: 90vh; } }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .modal-close:hover {
+            background: var(--light);
+            color: var(--danger);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 24px 0;
+            border-top: 1px solid var(--gray-light);
+            color: var(--gray);
+            font-size: 14px;
+            background: white;
+            margin-top: 40px;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state p { font-size: 16px; margin-bottom: 8px; }
+        .empty-state small { font-size: 14px; }
+
+        @media (max-width: 640px) { .empty-state { padding: 32px 16px; } .empty-state i { font-size: 40px; } }
+
+        .patient-count {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .mobile-only { display: block; }
+        .desktop-only { display: none; }
+
+        @media (min-width: 768px) {
+            .mobile-only { display: none; }
+            .desktop-only { display: block; }
+        }
+
+        @supports (padding: max(0px)) {
+            .header, .footer {
+                padding-left: max(16px, env(safe-area-inset-left));
+                padding-right: max(16px, env(safe-area-inset-right));
+            }
+        }
+
+        @media print {
+            .header, .footer, .btn, .search-container { display: none !important; }
+            .card { box-shadow: none; border: 1px solid #000; }
+        }
+
+        .export-options {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .export-modal {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 32px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: var(--card-shadow-hover);
+            animation: slideUp 0.3s ease-out;
+            position: relative;
+        }
+
+        @media (max-width: 480px) {
+            .export-modal { padding: 24px 20px; }
+        }
+
+        .export-modal h3 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .export-modal h3 i { color: var(--primary); }
+
+        .export-summary {
+            background: var(--primary-light);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .export-summary span {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .export-options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .export-option {
+            padding: 20px;
+            border: 2px solid var(--gray-light);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .export-option:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 480px) {
+            .export-option { padding: 16px; flex-direction: column; text-align: center; }
+        }
+
+        .export-option-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .export-option-icon.google-docs { background: linear-gradient(135deg, #4285F4, #34A853); }
+        .export-option-icon.google-sheets { background: linear-gradient(135deg, #0F9D58, #F4B400); }
+        .export-option-icon.json { background: linear-gradient(135deg, var(--primary), var(--accent)); }
+
+        .export-option-content { flex: 1; }
+        .export-option-content h4 { font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--dark); }
+        .export-option-content p { font-size: 13px; color: var(--gray); line-height: 1.4; }
+
+        .export-modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        @media (max-width: 480px) {
+            .export-modal-buttons { flex-direction: column; }
+            .export-modal-buttons .btn { width: 100%; }
+        }
+
+        .export-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .export-close:hover {
+            background: var(--light);
+            color: var(--danger);
+        }
+
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid var(--gray-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-spinner p {
+            color: var(--dark);
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .format-selection {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        .format-selection h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+
+        .format-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .format-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .format-option:hover { background: var(--light); }
+        .format-option.active { border-color: var(--primary); background: var(--primary-light); }
+        .format-option input[type="radio"] { margin: 0; }
+        .format-option label { cursor: pointer; font-size: 14px; flex: 1; }
+    </style>
+</head>
+<body>
+    <!-- LOGIN PAGE - TANPA DEFAULT CREDENTIALS -->
+    <div class="auth-page" id="authPage">
+        <div class="auth-container">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <img src="logo.png" alt="Lazuardi Junior High Global Compassionate School">
+                    <img src="Company2.png" alt="LJ4 2026 GARMIN JOURNEY GRADE 8" style="max-width: 100px; height: auto;">
+                </div>
+                <h1>Lazuardi GCS RS</h1>
+                <p>Sistem Manajemen Pasien Responsif</p>
+            </div>
+            
+            <form class="auth-form" id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <div class="input-with-icon">
+                        <input type="text" class="form-input" id="username" placeholder="Masukkan username" required>
+                        <i class="fas fa-user input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="input-with-icon">
+                        <input type="password" class="form-input" id="password" placeholder="Masukkan password" required>
+                        <i class="fas fa-eye input-icon" id="togglePassword"></i>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div class="app-container" id="appContainer">
+        <!-- HEADER dengan DUA LOGO - FLEXIBLE UNTUK SEMUA UKURAN -->
+        <header class="header">
+            <!-- Logo kiri atas - FLEXIBLE -->
+            <div class="header-logo-left">
+                <img src="logo.png" alt="Lazuardi Junior High Global Compassionate School" class="logo-img-left">
+            </div>
+            
+            <!-- Logo kanan atas - FLEXIBLE -->
+            <div class="header-logo-right">
+                <img src="Company2.png" alt="LJ4 2026 GARMIN JOURNEY GRADE 8" class="logo-img-right">
+            </div>
+            
+            <div class="container">
+                <div class="header-content">
+                    <div class="user-menu">
+                        <div class="user-info">
+                            <div class="user-avatar" id="userAvatar">A</div>
+                            <div class="user-text">
+                                <div style="font-weight: 600;" id="userName">Admin</div>
+                                <div style="font-size: 12px; color: var(--gray);">Staf Medis</div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn-logout" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span class="desktop-only">Logout</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <div class="container">
+            <div class="main-content">
+                <div class="single-stat-container">
+                    <i class="fas fa-users" style="font-size: 48px; color: var(--primary); opacity: 0.8;"></i>
+                    <div class="single-stat-number" id="totalPatients">0</div>
+                    <div class="single-stat-label">Total Pasien Terdaftar</div>
+                    <div class="single-stat-subtitle">Sistem Manajemen Pasien Lazuardi GCS RS</div>
+                </div>
+
+                <div class="dashboard">
+                    <!-- FORM CARD -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-user-plus"></i>
+                                <span class="mobile-only">Form Pasien</span>
+                                <span class="desktop-only">Pendaftaran Pasien</span>
+                            </h2>
+                            <button class="btn-secondary btn-small" onclick="generatePatientId()">
+                                <i class="fas fa-sync"></i>
+                                <span class="desktop-only">ID Baru</span>
+                            </button>
+                        </div>
+                        
+                        <form id="patientForm">
+                            <!-- INFO PRIBADI -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-user-circle"></i>
+                                    Informasi Pribadi
+                                </h3>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label-enhanced required">
+                                            <i class="fas fa-id-card"></i>
+                                            ID Pasien
+                                        </label>
+                                        <input type="text" id="patientId" class="form-input-enhanced" readonly>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label-enhanced required">
+                                            <i class="fas fa-user"></i>
+                                            Nama Lengkap
+                                        </label>
+                                        <input type="text" id="fullName" class="form-input-enhanced" placeholder="Nama lengkap" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label-enhanced required">
+                                            <i class="fas fa-birthday-cake"></i>
+                                            Umur (Tahun)
+                                        </label>
+                                        <input type="number" id="age" class="form-input-enhanced" placeholder="Contoh: 25" min="0" max="150" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label-enhanced required">
+                                            <i class="fas fa-venus-mars"></i>
+                                            Jenis Kelamin
+                                        </label>
+                                        <select id="gender" class="form-select-enhanced" required>
+                                            <option value="">Pilih</option>
+                                            <option value="Laki-laki">Laki-laki</option>
+                                            <option value="Perempuan">Perempuan</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- KONTAK -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-address-book"></i>
+                                    Kontak
+                                </h3>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label-enhanced required">
+                                            <i class="fas fa-phone"></i>
+                                            Telepon
+                                        </label>
+                                        <input type="tel" id="phone" class="form-input-enhanced" placeholder="08xxxxxxxxxx" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label-enhanced">
+                                            <i class="fas fa-envelope"></i>
+                                            Email
+                                        </label>
+                                        <input type="email" id="email" class="form-input-enhanced" placeholder="email@contoh.com">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- MEDIS -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-heartbeat"></i>
+                                    Medis
+                                </h3>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label-enhanced required">
+                                            <i class="fas fa-stethoscope"></i>
+                                            Health Risk
+                                        </label>
+                                        <input type="text" id="healthRisk" class="form-input-enhanced" placeholder="Health Risk utama" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label-enhanced">
+                                            <i class="fas fa-comment-medical"></i>
+                                            Advice
+                                        </label>
+                                        <textarea id="advice" class="form-textarea-enhanced" placeholder="Saran / Tindakan medis"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- RAWAT -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-hospital"></i>
+                                    Rawat
+                                </h3>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label-enhanced">
+                                            <i class="fas fa-calendar-plus"></i>
+                                            Tanggal Masuk
+                                        </label>
+                                        <input type="date" id="admissionDate" class="form-input-enhanced">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- ACTIONS -->
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Simpan
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                                    <i class="fas fa-redo"></i> Reset
+                                </button>
+                                <button type="button" class="btn btn-warning" onclick="loadSampleData()">
+                                    <i class="fas fa-vial"></i> Contoh
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- LIST CARD -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-list"></i>
+                                Daftar Pasien
+                            </h2>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn-secondary btn-small" onclick="refreshList()">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="searchInput" class="search-input" placeholder="Cari pasien...">
+                        </div>
+                        
+                        <!-- SELECTION INFO BAR -->
+                        <div class="selection-info" id="selectionInfo">
+                            <i class="fas fa-check-circle"></i>
+                            <span id="selectedCountText">0 pasien dipilih</span>
+                            <button class="btn-export-selected" id="exportSelectedBtn" onclick="showExportOptions()" disabled>
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table class="table" id="patientTable">
+                                <thead>
+                                    <tr>
+                                        <th class="checkbox-column">
+                                            <input type="checkbox" id="selectAllCheckbox" class="checkbox-item" onclick="toggleSelectAll()">
+                                        </th>
+                                        <th>ID</th>
+                                        <th>Nama</th>
+                                        <th>Umur</th>
+                                        <th>Health Risk</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="patientTableBody"></tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="patient-count" id="patientCount">0 pasien ditemukan</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; Lazuardi GCS RS - Projeck LJ 4</p>
+                <p style="margin-top: 8px; font-size: 13px;">
+                    <i class="fas fa-mobile-alt"></i> Responsif di semua perangkat
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- MODAL DETAIL -->
+    <div id="patientModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('patientModal')">&times;</button>
+            <h2 style="margin-bottom: 20px; color: var(--dark); font-size: 20px;">
+                <i class="fas fa-user-injured"></i>
+                Detail Pasien
+            </h2>
+            <div id="patientDetailContent"></div>
+        </div>
+    </div>
+
+    <!-- EXPORT OPTIONS MODAL -->
+    <div id="exportOptions" class="export-options">
+        <div class="export-modal">
+            <button class="export-close" onclick="closeExportOptions()">&times;</button>
+            <h3><i class="fas fa-file-export"></i> Ekspor Data Pasien</h3>
+            
+            <div class="export-summary" id="exportSummary">
+                <span><i class="fas fa-users"></i> <span id="exportCountText">0</span> pasien dipilih</span>
+                <span id="exportIds"></span>
+            </div>
+            
+            <div class="export-options-list">
+                <div class="export-option" onclick="exportToGoogleDocs()">
+                    <div class="export-option-icon google-docs">
+                        <i class="fas fa-file-word"></i>
+                    </div>
+                    <div class="export-option-content">
+                        <h4>Google Docs</h4>
+                        <p>Ekspor ke Google Docs dengan format laporan profesional.</p>
+                    </div>
+                </div>
+                
+                <div class="export-option" onclick="exportToGoogleSheets()">
+                    <div class="export-option-icon google-sheets">
+                        <i class="fas fa-table"></i>
+                    </div>
+                    <div class="export-option-content">
+                        <h4>Google Sheets</h4>
+                        <p>Ekspor ke Google Sheets untuk analisis data. Format spreadsheet dengan kolom terstruktur.</p>
+                    </div>
+                </div>
+                
+                <div class="export-option" onclick="showExportFormatOptions()">
+                    <div class="export-option-icon json">
+                        <i class="fas fa-file-code"></i>
+                    </div>
+                    <div class="export-option-content">
+                        <h4>Format File Lainnya</h4>
+                        <p>Ekspor dalam format JSON, CSV, atau PDF untuk backup dan keperluan lainnya.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="export-modal-buttons">
+                <button class="btn-secondary" onclick="closeExportOptions()">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXPORT FORMAT MODAL -->
+    <div id="exportFormatModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('exportFormatModal')">&times;</button>
+            <h2 style="margin-bottom: 20px; color: var(--dark); font-size: 20px;">
+                <i class="fas fa-file-export"></i>
+                Pilih Format Ekspor
+            </h2>
+            
+            <div class="format-selection">
+                <h4>Pilih format file:</h4>
+                <div class="format-options">
+                    <div class="format-option active" onclick="selectFormat('json')">
+                        <input type="radio" id="formatJson" name="exportFormat" value="json" checked>
+                        <label for="formatJson">
+                            <strong>JSON</strong> - Format data lengkap untuk backup dan restore
+                        </label>
+                    </div>
+                    
+                    <div class="format-option" onclick="selectFormat('csv')">
+                        <input type="radio" id="formatCsv" name="exportFormat" value="csv">
+                        <label for="formatCsv">
+                            <strong>CSV</strong> - Format spreadsheet sederhana
+                        </label>
+                    </div>
+                    
+                    <div class="format-option" onclick="selectFormat('pdf')">
+                        <input type="radio" id="formatPdf" name="exportFormat" value="pdf">
+                        <label for="formatPdf">
+                            <strong>PDF</strong> - Format dokumen portabel (laporan)
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="btn-group" style="margin-top: 24px;">
+                <button class="btn btn-primary" onclick="exportInSelectedFormat()">
+                    <i class="fas fa-download"></i> Ekspor
+                </button>
+                <button class="btn btn-secondary" onclick="closeModal('exportFormatModal')">
+                    Batal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOADING SPINNER -->
+    <div id="loadingSpinner" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Mengekspor data...</p>
+    </div>
+
+    <script>
+        // ==================== AUTH SYSTEM ====================
+        // DUA USER: admin & teamlj4
+        const AUTH_USERS = [
+            { username: 'admin', password: 'password123', name: 'Administrator' },
+            { username: 'teamlj4', password: 'lj4', name: 'Tim LJ4' }
+        ];
+
+        let isAuthenticated = false;
+        let currentUser = null;
+        let patients = JSON.parse(localStorage.getItem('medicare_patients')) || [];
+        let currentPatientId = patients.length + 1;
+        let selectedPatientId = null;
+        let selectedExportFormat = 'json';
+        
+        // ==================== CHECKBOX SELECTION ====================
+        let selectedPatientIds = new Set();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            setupEventListeners();
+            setupResponsiveBehaviors();
+            
+            // Fix logo sizing on load
+            adjustLogoSize();
+        });
+
+        window.addEventListener('resize', function() {
+            adjustLogoSize();
+        });
+
+        function adjustLogoSize() {
+            // This function ensures logos are always properly sized
+            const logos = document.querySelectorAll('.logo-img-left, .logo-img-right');
+            logos.forEach(logo => {
+                logo.style.maxWidth = '100%';
+                logo.style.height = 'auto';
+            });
+        }
+
+        function setupResponsiveBehaviors() {
+            window.addEventListener('orientationchange', function() {
+                setTimeout(adjustLayoutForScreen, 100);
+                setTimeout(adjustLogoSize, 150);
+            });
+            
+            window.addEventListener('resize', function() {
+                clearTimeout(this.resizeTimer);
+                this.resizeTimer = setTimeout(adjustLayoutForScreen, 250);
+            });
+        }
+
+        function adjustLayoutForScreen() {
+            const width = window.innerWidth;
+            if (width < 768) {
+                document.querySelectorAll('.table th:nth-child(4), .table td:nth-child(4)').forEach(cell => {
+                    cell.style.display = 'table-cell';
+                });
+            }
+        }
+
+        function checkAuth() {
+            const savedAuth = localStorage.getItem('medicare_auth');
+            if (savedAuth) {
+                try {
+                    const authData = JSON.parse(savedAuth);
+                    if (authData.expiry > Date.now()) {
+                        loginSuccess(authData);
+                    } else {
+                        localStorage.removeItem('medicare_auth');
+                        showAuthPage();
+                    }
+                } catch (e) {
+                    showAuthPage();
+                }
+            } else {
+                showAuthPage();
+            }
+        }
+
+        function showAuthPage() {
+            document.getElementById('authPage').style.display = 'flex';
+            document.getElementById('appContainer').style.display = 'none';
+            isAuthenticated = false;
+        }
+
+        function showMainApp() {
+            document.getElementById('authPage').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+            isAuthenticated = true;
+            generatePatientId();
+            loadPatients();
+            adjustLayoutForScreen();
+            
+            if (currentUser) {
+                document.getElementById('userName').innerHTML = currentUser.name;
+                document.getElementById('userAvatar').innerHTML = currentUser.name.charAt(0);
+            }
+        }
+
+        function setupEventListeners() {
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            
+            const togglePassword = document.getElementById('togglePassword');
+            if (togglePassword) {
+                togglePassword.addEventListener('click', function() {
+                    const passwordInput = document.getElementById('password');
+                    const type = passwordInput.type === 'password' ? 'text' : 'password';
+                    passwordInput.type = type;
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                });
+            }
+
+            document.getElementById('patientForm').addEventListener('submit', savePatient);
+
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    loadPatients();
+                });
+            }
+
+            const admissionDate = document.getElementById('admissionDate');
+            if (admissionDate) {
+                admissionDate.valueAsDate = new Date();
+            }
+
+            document.querySelectorAll('input, select, textarea').forEach(input => {
+                input.addEventListener('focus', function() {
+                    if (window.innerWidth < 768) {
+                        setTimeout(() => {
+                            this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 300);
+                    }
+                });
+            });
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                showNotification('Harap isi username dan password', 'error');
+                return;
+            }
+
+            const user = AUTH_USERS.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                const authData = {
+                    username: user.username,
+                    name: user.name,
+                    loginTime: new Date().toISOString(),
+                    expiry: Date.now() + (8 * 60 * 60 * 1000)
+                };
+                
+                localStorage.setItem('medicare_auth', JSON.stringify(authData));
+                currentUser = user;
+                loginSuccess(authData);
+            } else {
+                showNotification('Username atau password salah', 'error');
+                const loginForm = document.getElementById('loginForm');
+                loginForm.style.animation = 'shake 0.5s';
+                setTimeout(() => { loginForm.style.animation = ''; }, 500);
+            }
+        }
+
+        function loginSuccess(authData) {
+            isAuthenticated = true;
+            showMainApp();
+            showNotification(`Selamat datang, ${authData.name}!`, 'success');
+        }
+
+        function logout() {
+            if (confirm('Yakin ingin logout?')) {
+                localStorage.removeItem('medicare_auth');
+                currentUser = null;
+                showAuthPage();
+                showNotification('Anda telah logout', 'info');
+            }
+        }
+
+        // ==================== PATIENT MANAGEMENT ====================
+        function generatePatientId() {
+            const year = new Date().getFullYear();
+            const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
+            const paddedNumber = currentPatientId.toString().padStart(4, '0');
+            const id = `P-${year}${month}-${paddedNumber}`;
+            document.getElementById('patientId').value = id;
+            return id;
+        }
+
+        function savePatient(e) {
+            e.preventDefault();
+            
+            if (!isAuthenticated) {
+                showNotification('Harap login terlebih dahulu', 'error');
+                return;
+            }
+
+            const patientId = document.getElementById('patientId').value;
+            const existingIndex = patients.findIndex(p => p.id === patientId);
+            
+            const patient = {
+                id: patientId,
+                name: document.getElementById('fullName').value,
+                age: parseInt(document.getElementById('age').value) || 0,
+                gender: document.getElementById('gender').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value || null,
+                healthRisk: document.getElementById('healthRisk').value,
+                advice: document.getElementById('advice').value || null,
+                admissionDate: document.getElementById('admissionDate').value || null,
+                registrationDate: new Date().toISOString(),
+                lastUpdated: new Date().toISOString()
+            };
+
+            if (existingIndex !== -1) {
+                patients[existingIndex] = patient;
+                showNotification('Data pasien berhasil diperbarui', 'success');
+            } else {
+                patients.push(patient);
+                currentPatientId++;
+                showNotification('Pasien baru berhasil ditambahkan', 'success');
+            }
+
+            localStorage.setItem('medicare_patients', JSON.stringify(patients));
+            updateTotalPatientsCount();
+            resetForm();
+            loadPatients();
+            
+            if (window.innerWidth < 768) {
+                document.querySelector('.card:last-child').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function resetForm() {
+            generatePatientId();
+            document.getElementById('fullName').value = '';
+            document.getElementById('age').value = '';
+            document.getElementById('gender').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('healthRisk').value = '';
+            document.getElementById('advice').value = '';
+            document.getElementById('admissionDate').valueAsDate = new Date();
+        }
+
+        function updateTotalPatientsCount() {
+            const totalPatientsElement = document.getElementById('totalPatients');
+            if (totalPatientsElement) {
+                totalPatientsElement.textContent = patients.length;
+                totalPatientsElement.style.transform = 'scale(1.1)';
+                setTimeout(() => { totalPatientsElement.style.transform = 'scale(1)'; }, 300);
+            }
+        }
+
+        function loadPatients() {
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+            
+            let filteredPatients = patients.filter(patient => {
+                return !searchTerm || 
+                    patient.name.toLowerCase().includes(searchTerm) ||
+                    patient.id.toLowerCase().includes(searchTerm) ||
+                    (patient.healthRisk && patient.healthRisk.toLowerCase().includes(searchTerm));
+            });
+
+            renderPatientTable(filteredPatients);
+        }
+
+        function refreshList() {
+            loadPatients();
+            showNotification('Daftar pasien diperbarui', 'info');
+        }
+
+        // ==================== CHECKBOX FUNCTIONS ====================
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            const checkboxes = document.querySelectorAll('.patient-checkbox');
+            
+            if (selectAllCheckbox.checked) {
+                checkboxes.forEach(cb => {
+                    cb.checked = true;
+                    selectedPatientIds.add(cb.value);
+                });
+            } else {
+                checkboxes.forEach(cb => {
+                    cb.checked = false;
+                    selectedPatientIds.delete(cb.value);
+                });
+            }
+            
+            updateSelectionInfo();
+        }
+
+        function toggleSelect(checkbox) {
+            const patientId = checkbox.value;
+            
+            if (checkbox.checked) {
+                selectedPatientIds.add(patientId);
+            } else {
+                selectedPatientIds.delete(patientId);
+                
+                const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+                if (selectAllCheckbox) {
+                    selectAllCheckbox.checked = false;
+                }
+            }
+            
+            updateSelectionInfo();
+        }
+
+        function updateSelectionInfo() {
+            const count = selectedPatientIds.size;
+            const selectedCountText = document.getElementById('selectedCountText');
+            const exportSelectedBtn = document.getElementById('exportSelectedBtn');
+            
+            if (selectedCountText) {
+                selectedCountText.innerHTML = `${count} pasien dipilih`;
+            }
+            
+            if (exportSelectedBtn) {
+                exportSelectedBtn.disabled = count === 0;
+            }
+            
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            if (selectAllCheckbox) {
+                const totalCheckboxes = document.querySelectorAll('.patient-checkbox').length;
+                selectAllCheckbox.checked = count === totalCheckboxes && totalCheckboxes > 0;
+                selectAllCheckbox.indeterminate = count > 0 && count < totalCheckboxes;
+            }
+        }
+
+        function clearSelection() {
+            selectedPatientIds.clear();
+            const checkboxes = document.querySelectorAll('.patient-checkbox');
+            checkboxes.forEach(cb => { cb.checked = false; });
+            
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            }
+            
+            updateSelectionInfo();
+        }
+
+        function getSelectedPatients() {
+            if (selectedPatientIds.size === 0) return [];
+            
+            const allPatients = patients;
+            const selectedIds = Array.from(selectedPatientIds);
+            
+            return allPatients.filter(patient => selectedIds.includes(patient.id));
+        }
+
+        function renderPatientTable(patientsList) {
+            const tbody = document.getElementById('patientTableBody');
+            const countElement = document.getElementById('patientCount');
+            
+            if (patientsList.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px 16px; color: var(--gray);">
+                            <i class="fas fa-user-slash" style="font-size: 40px; margin-bottom: 16px; display: block; opacity: 0.5;"></i>
+                            Tidak ada data pasien
+                            ${document.getElementById('searchInput').value ? '<br><small style="font-size: 13px;">Coba kata kunci lain</small>' : ''}
+                        </td>
+                    </tr>
+                `;
+                if (countElement) countElement.textContent = '0 pasien ditemukan';
+                clearSelection();
+                return;
+            }
+
+            tbody.innerHTML = patientsList.map(patient => {
+                const name = window.innerWidth < 640 ? 
+                    (patient.name.length > 15 ? patient.name.substring(0, 12) + '...' : patient.name) : 
+                    patient.name;
+                
+                const healthRisk = window.innerWidth < 640 ? 
+                    (patient.healthRisk && patient.healthRisk.length > 20 ? patient.healthRisk.substring(0, 17) + '...' : patient.healthRisk || '-') : 
+                    patient.healthRisk || '-';
+                
+                const isChecked = selectedPatientIds.has(patient.id) ? 'checked' : '';
+                
+                return `
+                    <tr>
+                        <td class="checkbox-column">
+                            <input type="checkbox" class="checkbox-item patient-checkbox" value="${patient.id}" ${isChecked} onclick="toggleSelect(this)">
+                        </td>
+                        <td><strong>${patient.id}</strong></td>
+                        <td>${name}</td>
+                        <td>${patient.age || '-'} tahun</td>
+                        <td>${healthRisk}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-action btn-view" onclick="showPatientDetail('${patient.id}')" title="Lihat detail">
+                                    <i class="fas fa-eye"></i>
+                                    <span class="desktop-only">Lihat</span>
+                                </button>
+                                <button class="btn-action btn-edit" onclick="editPatient('${patient.id}')" title="Edit data">
+                                    <i class="fas fa-edit"></i>
+                                    <span class="desktop-only">Edit</span>
+                                </button>
+                                <button class="btn-action btn-delete" onclick="deletePatient('${patient.id}')" title="Hapus data">
+                                    <i class="fas fa-trash"></i>
+                                    <span class="desktop-only">Hapus</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            if (countElement) countElement.textContent = `${patientsList.length} pasien ditemukan`;
+            updateSelectionInfo();
+        }
+
+        function showPatientDetail(patientId) {
+            const patient = patients.find(p => p.id === patientId);
+            if (!patient) return;
+
+            selectedPatientId = patientId;
+            const regDate = new Date(patient.registrationDate).toLocaleDateString('id-ID');
+            const lastUpdated = new Date(patient.lastUpdated).toLocaleString('id-ID');
+
+            const isMobile = window.innerWidth < 768;
+            const gridCols = isMobile ? '1fr' : '1fr 1fr';
+            const gap = isMobile ? '12px' : '16px';
+
+            document.getElementById('patientDetailContent').innerHTML = `
+                <div style="display: grid; grid-template-columns: ${gridCols}; gap: ${gap}; margin-bottom: 24px;">
+                    <div><strong>ID Pasien:</strong><br>${patient.id}</div>
+                    <div><strong>Tanggal Daftar:</strong><br>${regDate}</div>
+                    
+                    <div><strong>Nama Lengkap:</strong><br>${patient.name}</div>
+                    <div><strong>Umur:</strong><br>${patient.age || '-'} tahun</div>
+                    
+                    <div><strong>Jenis Kelamin:</strong><br>${patient.gender}</div>
+                    <div><strong>Telepon:</strong><br>${patient.phone}</div>
+                    
+                    ${patient.email ? `<div><strong>Email:</strong><br>${patient.email}</div>` : ''}
+                    <div><strong>Health Risk:</strong><br>${patient.healthRisk || '-'}</div>
+                    
+                    ${patient.advice ? `<div><strong>Advice:</strong><br>${patient.advice}</div>` : ''}
+                    ${patient.admissionDate ? `<div><strong>Tanggal Masuk:</strong><br>${patient.admissionDate}</div>` : ''}
+                </div>
+                <div style="background: var(--light); padding: 12px; border-radius: 8px; margin-top: 16px;">
+                    <small style="color: var(--gray); font-size: 12px;">
+                        <i class="fas fa-history"></i> Terakhir update: ${lastUpdated}
+                    </small>
+                </div>
+                ${isMobile ? `
+                <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn-action btn-edit" onclick="editPatient('${patientId}'); closeModal('patientModal')" style="flex: 1;">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn-action btn-delete" onclick="deletePatient('${patientId}'); closeModal('patientModal')" style="flex: 1;">
+                        <i class="fas fa-trash"></i> Hapus
+                    </button>
+                </div>
+                ` : ''}
+            `;
+
+            openModal('patientModal');
+        }
+
+        function editPatient(patientId) {
+            const patient = patients.find(p => p.id === patientId);
+            if (!patient) return;
+
+            document.getElementById('patientId').value = patient.id;
+            document.getElementById('fullName').value = patient.name;
+            document.getElementById('age').value = patient.age || '';
+            document.getElementById('gender').value = patient.gender;
+            document.getElementById('phone').value = patient.phone;
+            document.getElementById('email').value = patient.email || '';
+            document.getElementById('healthRisk').value = patient.healthRisk || '';
+            document.getElementById('advice').value = patient.advice || '';
+            document.getElementById('admissionDate').value = patient.admissionDate || '';
+
+            if (window.innerWidth < 768) {
+                document.querySelector('.card:first-child').scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            showNotification(`Data ${patient.name} telah dimuat ke form`, 'info');
+        }
+
+        function deletePatient(patientId) {
+            if (!confirm('Hapus data pasien ini?')) return;
+            
+            patients = patients.filter(p => p.id !== patientId);
+            localStorage.setItem('medicare_patients', JSON.stringify(patients));
+            currentPatientId = patients.length + 1;
+            
+            if (selectedPatientIds.has(patientId)) {
+                selectedPatientIds.delete(patientId);
+            }
+            
+            loadPatients();
+            generatePatientId();
+            updateTotalPatientsCount();
+            showNotification('Data pasien berhasil dihapus', 'success');
+        }
+
+        function loadSampleData() {
+            const samplePatients = [
+                {
+                    id: "P-202401-0001",
+                    name: "Ahmad Santoso",
+                    age: 38,
+                    gender: "Laki-laki",
+                    phone: "081234567890",
+                    email: "ahmad@email.com",
+                    healthRisk: "Hipertensi Stage 2",
+                    advice: "Kontrol tekanan darah rutin, kurangi garam",
+                    admissionDate: "2024-01-15",
+                    registrationDate: new Date().toISOString(),
+                    lastUpdated: new Date().toISOString()
+                },
+                {
+                    id: "P-202401-0002",
+                    name: "Siti Rahmawati",
+                    age: 31,
+                    gender: "Perempuan",
+                    phone: "082345678901",
+                    email: "siti@email.com",
+                    healthRisk: "Diabetes Mellitus Tipe 2",
+                    advice: "Cek gula darah rutin, diet rendah gula",
+                    admissionDate: "2024-01-18",
+                    registrationDate: new Date().toISOString(),
+                    lastUpdated: new Date().toISOString()
+                },
+                {
+                    id: "P-202401-0003",
+                    name: "Budi Hidayat",
+                    age: 45,
+                    gender: "Laki-laki",
+                    phone: "083456789012",
+                    email: "budi@email.com",
+                    healthRisk: "Appendicitis Akut",
+                    advice: "Rencana operasi appendiktomi",
+                    admissionDate: "2024-01-20",
+                    registrationDate: new Date().toISOString(),
+                    lastUpdated: new Date().toISOString()
+                },
+                {
+                    id: "P-202401-0004",
+                    name: "Dewi Lestari",
+                    age: 27,
+                    gender: "Perempuan",
+                    phone: "085678901234",
+                    email: "dewi@email.com",
+                    healthRisk: "Anemia",
+                    advice: "Konsumsi suplemen zat besi, makan makanan bergizi",
+                    admissionDate: "2024-01-22",
+                    registrationDate: new Date().toISOString(),
+                    lastUpdated: new Date().toISOString()
+                },
+                {
+                    id: "P-202401-0005",
+                    name: "Joko Widodo",
+                    age: 52,
+                    gender: "Laki-laki",
+                    phone: "087890123456",
+                    email: "joko@email.com",
+                    healthRisk: "Asma Bronkial",
+                    advice: "Hindari pemicu, bawa inhaler",
+                    admissionDate: "2024-01-25",
+                    registrationDate: new Date().toISOString(),
+                    lastUpdated: new Date().toISOString()
+                }
+            ];
+
+            patients = samplePatients;
+            localStorage.setItem('medicare_patients', JSON.stringify(patients));
+            currentPatientId = patients.length + 1;
+            loadPatients();
+            generatePatientId();
+            updateTotalPatientsCount();
+            
+            showNotification('Data contoh berhasil dimuat', 'success');
+        }
+
+        // ==================== EXPORT FUNCTIONS ====================
+        function showExportOptions() {
+            const selectedPatients = getSelectedPatients();
+            
+            if (selectedPatients.length === 0) {
+                showNotification('Tidak ada pasien yang dipilih', 'warning');
+                return;
+            }
+            
+            document.getElementById('exportCountText').innerHTML = selectedPatients.length;
+            document.getElementById('exportOptions').style.display = 'flex';
+        }
+
+        function closeExportOptions() {
+            document.getElementById('exportOptions').style.display = 'none';
+        }
+
+        function showExportFormatOptions() {
+            closeExportOptions();
+            openModal('exportFormatModal');
+        }
+
+        function selectFormat(format) {
+            selectedExportFormat = format;
+            document.querySelectorAll('.format-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            document.querySelector(`input[value="${format}"]`).checked = true;
+        }
+
+        function exportInSelectedFormat() {
+            closeModal('exportFormatModal');
+            
+            switch(selectedExportFormat) {
+                case 'json': exportDataJSON(); break;
+                case 'csv': exportDataCSV(); break;
+                case 'pdf': exportDataPDF(); break;
+            }
+        }
+
+        function showLoading() { document.getElementById('loadingSpinner').style.display = 'flex'; }
+        function hideLoading() { document.getElementById('loadingSpinner').style.display = 'none'; }
+
+        function exportToGoogleDocs() {
+            const selectedPatients = getSelectedPatients();
+            
+            if (selectedPatients.length === 0) {
+                showNotification('Tidak ada pasien yang dipilih', 'warning');
+                closeExportOptions();
+                return;
+            }
+
+            showLoading();
+            
+            setTimeout(() => {
+                const docContent = generateGoogleDocsContent(selectedPatients);
+                const blob = new Blob([docContent], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `LazuardiRS_Pasien_${selectedPatients.length}_${getCurrentDate()}.html`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                hideLoading();
+                closeExportOptions();
+                showNotification(`${selectedPatients.length} pasien berhasil diekspor ke Google Docs`, 'success');
+            }, 1500);
+        }
+
+        function exportToGoogleSheets() {
+            const selectedPatients = getSelectedPatients();
+            
+            if (selectedPatients.length === 0) {
+                showNotification('Tidak ada pasien yang dipilih', 'warning');
+                closeExportOptions();
+                return;
+            }
+
+            showLoading();
+            
+            setTimeout(() => {
+                const csvContent = generateCSVContent(selectedPatients);
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `LazuardiRS_Pasien_${selectedPatients.length}_${getCurrentDate()}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                hideLoading();
+                closeExportOptions();
+                showNotification(`${selectedPatients.length} pasien berhasil diekspor ke Google Sheets`, 'success');
+            }, 1500);
+        }
+
+        function exportDataJSON() {
+            const selectedPatients = getSelectedPatients();
+            
+            if (selectedPatients.length === 0) {
+                showNotification('Tidak ada pasien yang dipilih', 'warning');
+                return;
+            }
+
+            const dataStr = JSON.stringify(selectedPatients, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `LazuardiRS_pasien_${selectedPatients.length}_${getCurrentDate()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            showNotification(`${selectedPatients.length} pasien berhasil diekspor sebagai JSON`, 'success');
+        }
+
+        function exportDataCSV() {
+            const selectedPatients = getSelectedPatients();
+            
+            if (selectedPatients.length === 0) {
+                showNotification('Tidak ada pasien yang dipilih', 'warning');
+                return;
+            }
+
+            const csvContent = generateCSVContent(selectedPatients);
+            const dataBlob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(dataBlob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `LazuardiRS_pasien_${selectedPatients.length}_${getCurrentDate()}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            showNotification(`${selectedPatients.length} pasien berhasil diekspor sebagai CSV`, 'success');
+        }
+
+        function exportDataPDF() {
+            const selectedPatients = getSelectedPatients();
+            
+            if (selectedPatients.length === 0) {
+                showNotification('Tidak ada pasien yang dipilih', 'warning');
+                return;
+            }
+
+            showLoading();
+            
+            setTimeout(() => {
+                const pdfContent = generatePDFContent(selectedPatients);
+                const blob = new Blob([pdfContent], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `LazuardiRS_Pasien_${selectedPatients.length}_${getCurrentDate()}.html`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                hideLoading();
+                showNotification(`${selectedPatients.length} pasien berhasil diekspor sebagai PDF`, 'success');
+            }, 2000);
+        }
+
+        function generateGoogleDocsContent(selectedPatients) {
+            const currentDate = new Date().toLocaleDateString('id-ID', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+            
+            let htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Laporan Data Pasien - Lazuardi GCS RS</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+        .header { text-align: center; margin-bottom: 40px; border-bottom: 3px solid #2563eb; padding-bottom: 20px; }
+        .hospital-name { color: #2563eb; font-size: 28px; font-weight: bold; }
+        .report-title { font-size: 24px; font-weight: bold; margin: 10px 0; }
+        .report-date { color: #666; font-size: 14px; margin-bottom: 30px; }
+        .summary { background: #f0f9ff; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .summary h3 { color: #2563eb; margin-top: 0; }
+        .patient-table { width: 100%; border-collapse: collapse; }
+        .patient-table th { background: #2563eb; color: white; padding: 12px; text-align: left; }
+        .patient-table td { padding: 10px; border-bottom: 1px solid #ddd; }
+        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 12px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="hospital-name">LAZUARDI GCS RUMAH SAKIT</div>
+        <div>Global Compassionate School Medical Center</div>
+        <div class="report-title">LAPORAN DATA PASIEN</div>
+        <div class="report-date">Tanggal: ${currentDate}</div>
+    </div>
+    
+    <div class="summary">
+        <h3>Ringkasan Data</h3>
+        <p>Total Pasien: <strong>${selectedPatients.length}</strong> orang</p>
+    </div>
+    
+    <table class="patient-table">
+        <thead>
+            <tr>
+                <th>ID Pasien</th>
+                <th>Nama Lengkap</th>
+                <th>Umur</th>
+                <th>Jenis Kelamin</th>
+                <th>Health Risk</th>
+                <th>Advice</th>
+                <th>Telepon</th>
+            </tr>
+        </thead>
+        <tbody>`;
+            
+            selectedPatients.forEach(patient => {
+                htmlContent += `
+            <tr>
+                <td>${patient.id}</td>
+                <td>${patient.name}</td>
+                <td>${patient.age || '-'} tahun</td>
+                <td>${patient.gender}</td>
+                <td>${patient.healthRisk || '-'}</td>
+                <td>${patient.advice || '-'}</td>
+                <td>${patient.phone}</td>
+            </tr>`;
+            });
+            
+            htmlContent += `
+        </tbody>
+    </table>
+    
+    <div class="footer">
+        <p>Dokumen ini dibuat secara otomatis oleh Sistem Manajemen Pasien Lazuardi GCS RS</p>
+        <p>© ${new Date().getFullYear()} Lazuardi GCS RS - Projeck LJ 4</p>
+        <p><em>Catatan: Salin konten ini dan tempel ke Google Docs</em></p>
+    </div>
+</body>
+</html>`;
+            
+            return htmlContent;
+        }
+
+        function generateCSVContent(selectedPatients) {
+            const headers = [
+                'ID Pasien',
+                'Nama Lengkap',
+                'Umur',
+                'Jenis Kelamin',
+                'Telepon',
+                'Email',
+                'Health Risk',
+                'Advice',
+                'Tanggal Masuk',
+                'Tanggal Daftar'
+            ];
+            
+            let csvContent = headers.join(',') + '\n';
+            
+            selectedPatients.forEach(patient => {
+                const row = [
+                    `"${patient.id}"`,
+                    `"${patient.name}"`,
+                    `"${patient.age || ''}"`,
+                    `"${patient.gender}"`,
+                    `"${patient.phone}"`,
+                    `"${patient.email || ''}"`,
+                    `"${(patient.healthRisk || '').replace(/"/g, '""')}"`,
+                    `"${(patient.advice || '').replace(/"/g, '""')}"`,
+                    `"${patient.admissionDate || ''}"`,
+                    `"${patient.registrationDate}"`
+                ];
+                csvContent += row.join(',') + '\n';
+            });
+            
+            return csvContent;
+        }
+
+        function generatePDFContent(selectedPatients) {
+            const currentDate = new Date().toLocaleDateString('id-ID', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+            
+            let htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Laporan Data Pasien - Lazuardi GCS RS</title>
+    <style>
+        @page { margin: 20mm; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; color: #333; }
+        .header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #2563eb; }
+        .hospital-name { color: #2563eb; font-size: 24px; font-weight: bold; }
+        .report-title { font-size: 20px; font-weight: bold; margin: 10px 0; }
+        .report-date { color: #666; font-size: 14px; margin-bottom: 30px; }
+        .summary-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 30px; }
+        .summary-title { color: #2563eb; font-size: 16px; font-weight: bold; margin-top: 0; }
+        .summary-item { text-align: center; }
+        .summary-number { font-size: 28px; font-weight: bold; color: #2563eb; }
+        .patient-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .patient-table th { background: #2563eb; color: white; padding: 10px; text-align: left; }
+        .patient-table td { padding: 8px; border-bottom: 1px solid #e2e8f0; }
+        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 11px; text-align: center; }
+        .no-print { display: block; }
+        @media print { .no-print { display: none; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="hospital-name">LAZUARDI GCS RUMAH SAKIT</div>
+        <div>Global Compassionate School Medical Center</div>
+        <div class="report-title">LAPORAN DATA PASIEN TERDAFTAR</div>
+        <div class="report-date">Dicetak pada: ${currentDate}</div>
+    </div>
+    
+    <div class="summary-box">
+        <h3 class="summary-title">STATISTIK PASIEN</h3>
+        <div class="summary-item">Total Pasien: <strong>${selectedPatients.length}</strong> orang</div>
+    </div>
+    
+    <table class="patient-table">
+        <thead>
+            <tr>
+                <th>ID Pasien</th>
+                <th>Nama</th>
+                <th>Umur</th>
+                <th>Jenis Kelamin</th>
+                <th>Health Risk</th>
+                <th>Advice</th>
+                <th>Telepon</th>
+            </tr>
+        </thead>
+        <tbody>`;
+            
+            selectedPatients.forEach(patient => {
+                htmlContent += `
+            <tr>
+                <td>${patient.id}</td>
+                <td>${patient.name}</td>
+                <td>${patient.age || '-'} thn</td>
+                <td>${patient.gender}</td>
+                <td>${patient.healthRisk || '-'}</td>
+                <td>${patient.advice || '-'}</td>
+                <td>${patient.phone}</td>
+            </tr>`;
+            });
+            
+            htmlContent += `
+        </tbody>
+    </table>
+    
+    <div class="footer">
+        <p><strong>Lazuardi GCS Rumah Sakit</strong> - Sistem Manajemen Pasien</p>
+        <p>© ${new Date().getFullYear()} Lazuardi GCS RS - Projeck LJ 4</p>
+    </div>
+    
+    <div class="no-print" style="text-align: center; margin-top: 30px;">
+        <button onclick="window.print()" style="background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+            Cetak / Simpan sebagai PDF
+        </button>
+    </div>
+    
+    <script>window.onload = function() { setTimeout(function() { window.print(); }, 500); };<\/script>
+</body>
+</html>`;
+            
+            return htmlContent;
+        }
+
+        function getCurrentDate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hour = String(now.getHours()).padStart(2, '0');
+            const minute = String(now.getMinutes()).padStart(2, '0');
+            return `${year}${month}${day}_${hour}${minute}`;
+        }
+
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
+                if (window.innerWidth < 768) { document.body.style.overflow = 'hidden'; }
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function showNotification(message, type) {
+            const colors = { success: '#10b981', error: '#ef4444', warning: '#f59e0b', info: '#3b82f6' };
+            const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+
+            document.querySelectorAll('.notification').forEach(n => n.remove());
+
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: ${window.innerWidth < 768 ? '70px' : '30px'};
+                right: ${window.innerWidth < 768 ? '16px' : '30px'};
+                left: ${window.innerWidth < 768 ? '16px' : 'auto'};
+                background: ${colors[type]};
+                color: white;
+                padding: 14px 20px;
+                border-radius: 10px;
+                box-shadow: var(--card-shadow-hover);
+                z-index: 10000;
+                animation: slideInRight 0.3s ease-out;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                max-width: ${window.innerWidth < 768 ? 'calc(100% - 32px)' : '400px'};
+                font-weight: 500;
+                font-size: 14px;
+            `;
+
+            notification.innerHTML = `<i class="fas ${icons[type]}" style="font-size: 18px;"></i><span>${message}</span>`;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease-out forwards';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+
+            if (!document.getElementById('notification-styles')) {
+                const style = document.createElement('style');
+                style.id = 'notification-styles';
+                style.textContent = `
+                    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+                    @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+                    @keyframes shake { 0%,100% { transform: translateX(0); } 10%,30%,50%,70%,90% { transform: translateX(-5px); } 20%,40%,60%,80% { transform: translateX(5px); } }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        setInterval(() => {
+            if (isAuthenticated) {
+                const savedAuth = localStorage.getItem('medicare_auth');
+                if (savedAuth) {
+                    try {
+                        const authData = JSON.parse(savedAuth);
+                        if (authData.expiry <= Date.now()) { logout(); showNotification('Sesi telah berakhir', 'warning'); }
+                    } catch (e) {}
+                }
+            }
+        }, 60000);
+
+        window.addEventListener('popstate', function() {
+            const modal = document.querySelector('.modal[style*="display: flex"]');
+            if (modal) { closeModal(modal.id); }
+        });
+
+        document.addEventListener('touchstart', function() {}, {passive: true});
+
+        function initTotalPatientsCount() { updateTotalPatientsCount(); }
+        initTotalPatientsCount();
+    </script>
+</body>
+</html>
